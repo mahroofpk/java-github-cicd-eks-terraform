@@ -1,0 +1,159 @@
+name: Java App deploy to EKS
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches: [ "main" ]
+env:
+  REPO_PATH: "${{ vars.REPO_PATH }}"
+  EKS_CLUSTERNAME: "${{ vars.EKS_CLUSTERNAME }}"
+  HELM_RELEASE_NAME: "${{ vars.HELM_RELEASE_NAME }}"
+  HELM_CHART_PATH: "${{ vars.HELM_CHART_PATH }}"
+
+jobs:
+  ### CONTINOUS INTEGRATION STAGE ###
+  ci-job:
+   runs-on: ubuntu-latest
+    
+   steps:
+   # Installing Java v17  
+   - name: Set up JDK 17
+     uses: actions/setup-java@v3
+     with:
+          java-version: '17'
+          distribution: 'temurin'
+
+   # Configuring aws cli  
+   - name: Configure AWS Credentials
+     uses: aws-actions/configure-aws-credentials@v4
+     with:
+        aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_KEY }}
+        aws-region: us-west-1
+
+   - name: Checkout
+     uses: actions/checkout@v4.1.1
+  
+   # Maven build
+   - name: Build with Maven
+     run: cd java_backend_code && mvn clean package  
+
+   # Login to ECR
+   - name: Login to Amazon ECR
+     id: login-ecr
+     uses: aws-actions/amazon-ecr-login@v2
+   
+   # Setting up image tag using git commit sha
+   - name: Set image tag with commit SHA
+     run: |
+       IMAGE_TAG=$(echo "${{ github.sha }}" | cut -c1-7)
+       echo "Setting IMAGE_TAG to $IMAGE_TAG"
+       echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+       echo "${IMAGE_TAG}" > image-tag.txt
+      
+   # Docker Build, tag and push image to ECR    
+   - name: Build, tag, and push docker image to Amazon ECR
+     run: |
+        #REGISTRY=${{ steps.login-ecr.outputs.registry }}
+        docker build -t $REPO_PATH:${{ env.IMAGE_TAG }} java_backend_code/
+        docker push $REPO_PATH:${{ env.IMAGE_TAG }}
+
+   # Copying image-tag.txt file contains IMAGE_TAG to artifacts      
+   - name: Upload Dynamic Value Artifact
+     uses: actions/upload-artifact@v4
+     with:
+        name: image-tag-artifact
+        path: image-tag.txt
+
+   # Installing Trivy for Container vulnerability scanning
+   - name: Install Trivy
+     run: |
+      wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+      echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+      sudo apt-get update && sudo apt-get install -y trivy
+   
+   # Container vulnerability scanning using Trivy and copy results to a file
+   - name: Scan Docker image with Trivy
+     run: trivy image $REPO_PATH:${{ env.IMAGE_TAG }} > trivy_results.txt
+   
+   # Upload trivy results to artifact
+   - name: Create Trivy results artifact
+     uses: actions/upload-artifact@v4
+     with:
+       name: trivy-results
+       path: trivy_results.txt
+  
+  # Check if any CRITICAL vulnerabilities in trivy scan report and fail the pipeline if found
+   - name: Check if any Critical vulnerabilities found in Trivy results
+     run: |
+       CRITICAL_COUNT=$(grep -oP 'CRITICAL: \K[0-9]+' trivy_results.txt)
+       echo "Number of CRITICAL vulnerabilities: $CRITICAL_COUNT"
+       if [ "$CRITICAL_COUNT" -gt 0 ]; then
+         echo "CRITICAL vulnerabilities found! Stopping CI Pipeline"
+         exit 1
+       else
+         echo "No CRITICAL vulnerabilities found."
+       fi
+  
+
+  ### CONTINOUS DEPLOYMENT STAGE ###
+  cd-job:
+   runs-on: ubuntu-latest
+   # CD job will be triggered only if CI is success
+   needs: ci-job
+   if: ${{ needs.ci-job.result == 'success' }}
+
+   steps:
+   - name: Checkout
+     uses: actions/checkout@v4.1.1
+
+   - name: Configure AWS Credentials
+     uses: aws-actions/configure-aws-credentials@v4
+     with:
+       aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY }}
+       aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_KEY }}
+       aws-region: ${{ vars.AWS_REGION }}
+
+   - name: Update kube config
+     run: aws eks update-kubeconfig --name $EKS_CLUSTERNAME
+  
+   - name: Download Dynamic Value Artifact
+     uses: actions/download-artifact@v4
+     with:
+       name: image-tag-artifact
+       path: artifact_data
+
+   # Fetching Image tag from file created during CI
+   - name: Read Dynamic Value from Artifact
+     run: |
+       IMAGE_TAG=$(cat 'artifact_data/image-tag.txt')
+       echo "Retrieved IMAGE_TAG: $IMAGE_TAG"
+       echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+    
+
+   - name: Check if Helm chart is already installed
+     id: check_helm_chart
+     run: |
+          if helm status $HELM_RELEASE_NAME &> /dev/null; then
+            echo "Helm chart $HELM_RELEASE_NAME is already installed."
+            echo "::set-output name=helm_chart_installed::true"
+          else
+            echo "Helm chart $HELM_RELEASE_NAME is not installed."
+            echo "::set-output name=helm_chart_installed::false"
+          fi
+
+   - name: Deploy or Upgrade Java helm chart on EKS
+     if: steps.check_helm_chart.outputs.helm_chart_installed == 'true'
+     run: |
+          helm upgrade $HELM_RELEASE_NAME $HELM_CHART_PATH --set=image.tag=${{ env.IMAGE_TAG }} --set=image.repository=$REPO_PATH
+
+   - name: Install Helm chart if not installed
+     if: steps.check_helm_chart.outputs.helm_chart_installed == 'false'
+     run: |
+        helm install $HELM_RELEASE_NAME $HELM_CHART_PATH --set=image.tag=${{ env.IMAGE_TAG }} --set=image.repository=$REPO_PATH
+
+ 
+
+
