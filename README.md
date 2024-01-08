@@ -182,7 +182,7 @@ and paste the contents from github-actions-cicd.yml file available at repository
 Once copied in the github ui, Commit the changes.
 
 You should see github-actions-cicd.yml file at your repository
-https://github.com/<your_github_id>/java-github-cicd-eks-terraform/tree/main/.github/workflows
+`https://github.com/<your_github_id>/java-github-cicd-eks-terraform/tree/main/.github/workflows`
 
 In Actions, you can see a pipeline running
 
@@ -205,7 +205,7 @@ Hello World!, Welcome to the Demo : V1
 **Stage5 :** - End-to-End CICD test
 
 Change the application version to V2
-https://github.com/<your_github_id>/java-github-cicd-eks-terraform/blob/main/java_backend_code/src/main/java/com/demo_backend_project/DemoApplication.java
+`https://github.com/<your_github_id>/java-github-cicd-eks-terraform/blob/main/java_backend_code/src/main/java/com/demo_backend_project/DemoApplication.java`
 
 ![image](https://github.com/mahroofpk/java-github-cicd-eks-terraform/assets/24579783/7daf0bb3-4d0d-43b7-a23a-bc7530a16208)
 
