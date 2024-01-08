@@ -221,15 +221,15 @@ Wait for the new github action pipeline to complete. You should see v2 version i
 **Stage6 :**
 
 Run
-1. helm uninstall java-demo
+1. `helm uninstall java-demo`
 
 2. Navigate to terraform-eks directory and run
-terraform destroy -auto-approve
+`terraform destroy -auto-approve`
 
 Check the terraform output and verify all the resources are destroyed
 
 3. Delete the ECR Repository
-   aws ecr delete-repository --repository-name demo-project/java-backend-app --force
+   `aws ecr delete-repository --repository-name demo-project/java-backend-app --force`
 
 
 -----------
