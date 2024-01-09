@@ -98,7 +98,7 @@ From my Example:
 `bucket = "eks-demo-tfstate-bucket"`
 `key    = "eks/terraform.tfstate"`
 
-Variabled are defined in `variable.tf`. EKS clustername is set as `java-demo-eks`.
+Variables are defined in `variable.tf`. EKS cluster name is set as `java-demo-eks`.
 You can change variables if needed.
 
 Run
@@ -111,14 +111,14 @@ Once init is Success, Run
 `terraform apply -auto-approve`
 
 Once the cluster and related components are launched,
-Run this command to access the cluster from local machine
+Run this command to access the cluster from the local machine
 
 `aws eks update-kubeconfig --region us-west-1 --name java-demo-eks`
 
 Verify the cluster access by running - 
 `kubectl get nodes`
 
-If you see the kubernetes nodes in output, That means we're able to connect to EKS cluster from local.
+If you see the Kubernetes nodes in the output, That means we're able to connect to the EKS cluster from local.
 
 
 Let's now create the ECR repository
@@ -127,7 +127,7 @@ Let's now create the ECR repository
 
 Ex: aws ecr create-repository --repository-name demo-project/java-backend-app --region us-west-1
 
-You can see repository uri like
+You can see repository URI like
 301623141486.dkr.ecr.us-west-1.amazonaws.com/demo-project/java-backend-app
 
 ![Alt text](image-1.png)
@@ -137,9 +137,9 @@ You can see repository uri like
 
 **Stage4 :**
 
-We're now going to setup github actions CI CD pipeline.
+We're now going to set up GitHub actions CI CD pipeline.
 
-First, We need to add few secrets and Variables in github
+First, We need to add a few secrets and Variables added in GitHub
 
 
 Goto Secrets --> Create New Repository Secret
@@ -167,7 +167,8 @@ Add below variables
 4. Name: HELM_RELEASE_NAME
    Value: java-demo
 
-![Alt text](image.png)
+![image](https://github.com/mahroofpk/java-github-cicd-eks-terraform/assets/24579783/9d63bb7a-bbbc-4ded-973a-eda51e9176e1)
+
 
 Next step is to enable Github Actions
 
