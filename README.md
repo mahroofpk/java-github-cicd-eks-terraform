@@ -37,7 +37,7 @@ Fork this repository and clone your repository to your local machine
 https://github.com/mahroofpk/java-github-cicd-eks-terraform
 -----------
 
-**Stage1: Testing at local environment **
+**Stage1: Testing at local environment**
 
 - Verify Java version is 17 using commands
 
