@@ -86,7 +86,7 @@ Hello World!, Welcome to the Demo : V1
 
 -----------
 
-**Stage3:** - Create eks cluster using terraform and create ECR Repository
+**Stage3: Create EKS cluster using Terraform and ECR Repository**
 
 Navigate to the terraform directory
 `cd java-github-cicd-eks-terraform/terraform-eks`
@@ -135,7 +135,7 @@ You can see repository URI like
 
 -----------
 
-**Stage4 :**
+**Stage4 : CICD Implementation **
 
 We're now going to set up GitHub actions CI CD pipeline.
 
@@ -222,7 +222,7 @@ Wait for the new github action pipeline to complete. You should see v2 version i
 
 -----------
 
-**Stage6 :**
+**Stage6 : Cleanup**
 
 Run
 1. `helm uninstall java-demo`
