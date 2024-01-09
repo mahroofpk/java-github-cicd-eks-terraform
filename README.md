@@ -152,7 +152,8 @@ Add below secrets
 2. Name - `MY_AWS_SECRET_KEY`
    Secret - `<Your AWS Secret Key>`
 
-![Alt text](image-2.png)
+![image](https://github.com/mahroofpk/java-github-cicd-eks-terraform/assets/24579783/84fc9fe4-9691-4737-9d2b-0dd838f36f63)
+
 
 Now, navigate to Variables --> Create New Repository Variable
 `https://github.com/<your_github_id>/java-github-cicd-eks-terraform/settings/variables/actions`
@@ -186,6 +187,8 @@ You should see github-actions-cicd.yml file at your repository
 `https://github.com/<your_github_id>/java-github-cicd-eks-terraform/tree/main/.github/workflows`
 
 In Actions, you can see a pipeline running
+
+![image](https://github.com/mahroofpk/java-github-cicd-eks-terraform/assets/24579783/99931694-c89c-46ae-8d44-4270bf02cd3b)
 
 Once the CI and CD job is complete, You can check the status pods and access the application through loadbalancer endpoint
 
