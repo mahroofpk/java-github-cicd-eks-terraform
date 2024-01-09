@@ -3,7 +3,10 @@ Best practices followed
 1. Separated CI and CD jobs. Added CI dependency on CD.
 2. Terraform modules are being used for less code and reusability.
 3. Helm Chart is used to deploy Kubernetes manifests for Versioning, Templating, and Rollback capabilities.
-4. Minimized the usage of hardcoded variables in CI/CD workflow pipelines and utilized variables to increase flexibility and simplify maintenance.  
+4. Minimized the usage of hardcoded variables in CI/CD workflow pipelines and utilized variables to increase flexibility and simplify maintenance.
+
+We can deploy the Kubernetes manifests in a new namespace. Here we've deployed in the default namespace to reduce the demo complexity. 
+
 
 For Application reliability and Infrastructure scalability, Deployed
 1. Horizontal Pod Auto Scaling
