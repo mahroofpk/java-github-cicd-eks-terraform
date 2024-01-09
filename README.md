@@ -143,7 +143,7 @@ First, We need to add few secrets and Variables in github
 
 
 Goto Secrets --> Create New Repository Secret
-https://github.com/<your_github_id>/java-github-cicd-eks-terraform/settings/secrets/actions
+`https://github.com/<your_github_id>/java-github-cicd-eks-terraform/settings/secrets/actions`
 
 Add below secrets
 1. Name - `MY_AWS_ACCESS_KEY`
@@ -155,7 +155,7 @@ Add below secrets
 ![Alt text](image-2.png)
 
 Now, navigate to Variables --> Create New Repository Variable
-https://github.com/<your_github_id>/java-github-cicd-eks-terraform/settings/variables/actions
+`https://github.com/<your_github_id>/java-github-cicd-eks-terraform/settings/variables/actions`
 
 Add below variables
 1. Name: AWS_REGION
