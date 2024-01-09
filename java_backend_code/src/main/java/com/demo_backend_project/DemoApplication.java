@@ -13,6 +13,6 @@ public class DemoApplication {
     }
     @GetMapping("/hello")
     public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
-      return String.format("Hello %s!, Welcome to the Demo : V2", name);
+      return String.format("Hello %s!, Welcome to the Demo : V1", name);
     }
 }
