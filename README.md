@@ -6,7 +6,7 @@ We will be testing the application at different stages.
 
 Stage1 : Testing at local environment
 
-Stage2 : Containerise the application and test
+Stage2 : Containerise the application and test using Docker
 
 Stage3 : Launch the EKS cluster using terraform and ECR repository
 
