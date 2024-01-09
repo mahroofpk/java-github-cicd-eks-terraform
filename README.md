@@ -35,9 +35,9 @@ Require below tools installed in local machine or on a VM
 Fork this repository and clone your repository to your local machine
 
 https://github.com/mahroofpk/java-github-cicd-eks-terraform
+-----------
 
-
-**Stage1:** Testing at local environment
+**Stage1: Testing at local environment **
 
 - Verify Java version is 17 using commands
 
@@ -61,9 +61,9 @@ Expected output:
 
 -----------
 
-**Stage2:**
+**Stage2: Build and test Docker image**
 
-Let's now containarise the application and test the docker image
+Let's now containerize the application and test the docker image
 
 From path `java-github-cicd-eks-terraform/java_backend_code`
 
@@ -72,16 +72,16 @@ Execute commands
 Building Docker Image using Dockerfile - 
 `docker build -t java-backend:v1 .`
 
-Once the image is built, Verify by running `docker images`
+Once the image is built, Verify the image by running `docker images`
 
-Then run
-`docker run -p 8080:8080 java-backend:v1 --rm`
+Run the application using docker image we've built.
+`docker run -p 8080:8080 java-backend:v1 --rm` 
 
 - Test the application with 
 http://localhost:8080/hello
 
 Expected output:
-Hello World!, Welcome to the Demo : V1
+`Hello World!, Welcome to the Demo : V1`
 
 
 -----------
